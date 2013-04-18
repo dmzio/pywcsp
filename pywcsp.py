@@ -25,7 +25,6 @@ class SpectrometerApp(QtGui.QWidget):
         self.video = QtGui.QLabel(self)
         self.video.setMinimumSize(QtCore.QSize(600, 400))
 
-
     def redraw(self):
         _, frame = self.camcapture.read()
 
@@ -33,7 +32,6 @@ class SpectrometerApp(QtGui.QWidget):
         pixmap = QtGui.QPixmap.fromImage(image).scaledToWidth(600)
         self.video.setPixmap(pixmap)
         self.addinfo.setText('Gain is {0}'.format(self.camcapture.get(cv.CV_CAP_PROP_GAIN)))
-
 
     def run(self):
         self.show()
