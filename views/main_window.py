@@ -1,6 +1,7 @@
 # coding=utf-8
 from PySide import QtCore, QtGui
 import cv, cv2, time, ImageQt
+from views.camimage import CamImageView
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -11,24 +12,10 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon.fromTheme('face-devilish'))
         self.setMinimumSize(QtCore.QSize(600, 400))
 
-        self.camcapture = cv2.VideoCapture(0)
-        self.camcapture.set(cv.CV_CAP_PROP_FRAME_WIDTH, 2280)
-        self.camcapture.set(cv.CV_CAP_PROP_FRAME_HEIGHT, 720)
-
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.redraw)
-        timer.start()
-
-        self.addinfo = QtGui.QLabel("sdfhwsldkjhgklajshgfkafgkjfgkashy", self)
-
         cwidget = QtGui.QWidget(self)
         self.setCentralWidget(cwidget)
 
-        self.video = QtGui.QLabel(self.centralWidget())
-        self.video.setMinimumSize(QtCore.QSize(600, 400))
-
-        self.show()
-
+        camimage = CamImageView(cwidget)
 
         self.statusBar().showMessage('Ready')
 
@@ -55,13 +42,9 @@ class MainWindow(QtGui.QMainWindow):
         mt.addAction(exit)
         mt.setFloatable(True)
 
-    def redraw(self):
-        _, frame = self.camcapture.read()
+        self.show()
 
-        image = QtGui.QImage(frame.data, frame.shape[1], frame.shape[0], QtGui.QImage.Format_RGB888).rgbSwapped()
-        pixmap = QtGui.QPixmap.fromImage(image).scaledToWidth(600)
-        self.video.setPixmap(pixmap)
-        self.addinfo.setText('Gain is {0}'.format(self.camcapture.get(cv.CV_CAP_PROP_GAIN)))
+
 
 
 
