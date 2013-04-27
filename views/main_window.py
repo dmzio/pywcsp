@@ -2,6 +2,18 @@
 from PySide import QtCore, QtGui
 import cv, cv2, time, ImageQt
 from views.camimage import CamImageView
+from utils.pyside_dynamic import loadUi
+
+import matplotlib
+
+## Added for PySide
+matplotlib.use('Qt4Agg')
+matplotlib.rcParams['backend.qt4'] = 'PySide'
+
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QTAgg as NavigationToolbar
+from matplotlib.figure import Figure
+import pylab
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -12,10 +24,16 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon.fromTheme('face-devilish'))
         self.setMinimumSize(QtCore.QSize(600, 400))
 
-        cwidget = QtGui.QWidget(self)
-        self.setCentralWidget(cwidget)
+        loadUi('views/ui/main_tabs.ui', self)
 
-        camimage = CamImageView(cwidget)
+
+        #self.setCentralWidget(cwidget)
+
+        camimage = CamImageView(self.tab_2)
+
+        timer = QtCore.QTimer(self)
+        timer.timeout.connect(camimage.redraw)
+        timer.start()
 
         self.statusBar().showMessage('Ready')
 
@@ -43,6 +61,14 @@ class MainWindow(QtGui.QMainWindow):
         mt.setFloatable(True)
 
         self.show()
+
+            # generate the plot
+        fig = Figure(figsize=(600, 600), dpi=72, facecolor=(1, 1, 1), edgecolor=(0, 0, 0))
+        ax = fig.add_subplot(111)
+        ax.plot([0, 1])
+        # generate the canvas to display the plot
+        canvas = FigureCanvas(fig)
+        self.tryvl.addWidget(canvas)
 
 
 
