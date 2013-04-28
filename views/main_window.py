@@ -1,8 +1,11 @@
 # coding=utf-8
 from PySide import QtCore, QtGui
 import cv, cv2, time, ImageQt
+from models.cam import Camera
+from models.framedata import DataQueue, DataQueueController
 from views.camimage import CamImageView
 from utils.pyside_dynamic import loadUi
+import numpy as np
 
 import matplotlib
 
@@ -24,12 +27,22 @@ class MainWindow(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon.fromTheme('face-devilish'))
         self.setMinimumSize(QtCore.QSize(600, 400))
 
-        loadUi('views/ui/main_tabs.ui', self)
+        tabs = QtGui.QTabWidget()
+        self.setCentralWidget(tabs)
 
+        tab_wf = QtGui.QWidget(self)
+        tabs.addTab(tab_wf, 'WF')
+        tab_wf_l = QtGui.QVBoxLayout(tab_wf)
 
-        #self.setCentralWidget(cwidget)
+        self.waterfall = QtGui.QLabel(tab_wf)
+        tab_wf_l.addWidget(self.waterfall)
+        self.waterfall.setMaximumHeight(200)
 
-        camimage = CamImageView(self.tab_2)
+        tab_2 = QtGui.QWidget(self)
+        tabs.addTab(tab_2, 'CamView')
+        tab_2_layout = QtGui.QVBoxLayout(tab_2)
+        camimage = CamImageView(tab_2)
+        tab_2_layout.addWidget(camimage)
 
         timer = QtCore.QTimer(self)
         timer.timeout.connect(camimage.redraw)
@@ -67,9 +80,59 @@ class MainWindow(QtGui.QMainWindow):
         ax = fig.add_subplot(111)
         ax.plot([0, 1])
         # generate the canvas to display the plot
-        canvas = FigureCanvas(fig)
-        self.tryvl.addWidget(canvas)
+        self.canvas = MyDynamicMplCanvas()
+        tab_wf_l.addWidget(self.canvas)
 
+
+        self.wfqueue = DataQueueController(camimage.cam)
+        timer.timeout.connect(self.wf_redraw)
+
+    def wf_redraw(self):
+        self.wfqueue.add_frame_to_queue()
+        fr = self.wfqueue.queue.get_waterfall_data()
+
+        image = QtGui.QImage(fr.data, fr.shape[1], fr.shape[0], QtGui.QImage.Format_RGB888).rgbSwapped()
+        self.pixmap1 = QtGui.QPixmap.fromImage(image).scaledToWidth(self.size().width()-100)
+
+        self.waterfall.setPixmap(self.pixmap1)
+
+        self.canvas.data = self.wfqueue.queue.data[-1][:,1]  # gets the G component from the last line
+
+
+
+class MyDynamicMplCanvas(FigureCanvas):
+    """A canvas that updates itself every second with a new plot."""
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = fig.add_subplot(111)
+        # We want the axes cleared every time plot() is called
+        self.axes.hold(False)
+
+        self.compute_initial_figure()
+
+        #
+        FigureCanvas.__init__(self, fig)
+        self.setParent(parent)
+
+        FigureCanvas.setSizePolicy(self,
+                                   QtGui.QSizePolicy.Expanding,
+                                   QtGui.QSizePolicy.Expanding)
+        FigureCanvas.updateGeometry(self)
+        timer = QtCore.QTimer(self)
+        QtCore.QObject.connect(timer, QtCore.SIGNAL("timeout()"), self.update_figure)
+        timer.start(10)
+
+        self.data = []
+
+    def compute_initial_figure(self):
+         self.axes.plot([0, 1, 2, 3], 'r')
+
+    def update_figure(self):
+        # Build a list of 4 random integers between 0 and 10 (both inclusive)
+        l = self.data
+
+        self.axes.plot(l, 'r')
+        self.draw()
 
 
 

@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>494</width>
-    <height>346</height>
+    <width>484</width>
+    <height>371</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -27,45 +27,12 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="sizeConstraint">
-    <enum>QLayout::SetDefaultConstraint</enum>
+    <enum>QLayout::SetNoConstraint</enum>
    </property>
-   <item row="0" column="0">
-    <widget class="QLabel" name="addinfo">
-     <property name="text">
-      <string>TextLabel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="video">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
-    <widget class="QSlider" name="slider_y1">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="invertedAppearance">
-      <bool>true</bool>
-     </property>
-     <property name="invertedControls">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QSlider" name="slider_y2">
+    <widget class="QSlider" name="slider_y">
      <property name="sliderPosition">
-      <number>99</number>
+      <number>50</number>
      </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -75,16 +42,6 @@
      </property>
      <property name="invertedControls">
       <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QSlider" name="slider_x1">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="tickPosition">
-      <enum>QSlider::NoTicks</enum>
      </property>
     </widget>
    </item>
@@ -101,6 +58,36 @@
      </property>
      <property name="invertedControls">
       <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QSlider" name="slider_x1">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::NoTicks</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="video">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="addinfo">
+     <property name="text">
+      <string>TextLabel</string>
      </property>
     </widget>
    </item>
