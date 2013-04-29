@@ -22,6 +22,7 @@ import pylab
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
+        self.settings = None
         QtGui.QMainWindow.__init__(self)
 
         self.setWindowTitle(u'Web-Cam Spectrometer System')
@@ -74,7 +75,9 @@ class MainWindow(QtGui.QMainWindow):
         #mt.addAction(exit)
         #mt.setFloatable(True)
 
+        self.readSettings()
         self.show()
+
 
             # generate the plot
         fig = Figure(figsize=(600, 600), dpi=72, facecolor=(1, 1, 1), edgecolor=(0, 0, 0))
@@ -123,6 +126,29 @@ class MainWindow(QtGui.QMainWindow):
 
         self.canvas.data = self.wfqueue.queue.data[-1][:,1]  # gets the G component from the last line
         self.canvas.data2 = self.wfqueue.queue.data[0][:,1]  # gets the G component from the first line
+
+
+    def writeSettings(self):
+        self.settings = QtCore.QSettings()
+        self.settings.beginGroup("MainWindow")
+        self.settings.setValue("size", self.size())
+        self.settings.setValue("pos", self.pos())
+        self.settings.endGroup()
+
+    def readSettings(self):
+        self.settings = QtCore.QSettings()
+        self.settings.beginGroup("MainWindow")
+        self.resize(self.settings.value("size", QtCore.QSize(400, 400)))
+        self.move(self.settings.value("pos", QtCore.QPoint(200, 200)))
+        self.settings.endGroup()
+
+    # event : QCloseEvent
+    def closeEvent(self, event):
+        if True:  # self.userReallyWantsToQuit():
+            self.writeSettings()
+            event.accept()
+        else:
+            event.ignore()
 
 
 

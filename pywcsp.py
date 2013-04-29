@@ -6,6 +6,9 @@ from views.main_window import MainWindow
 
 def main():
     app = QtGui.QApplication(sys.argv)
+    QtCore.QCoreApplication.setOrganizationName("PyScience")
+    QtCore.QCoreApplication.setOrganizationDomain("ziolkovskiy.com")
+    QtCore.QCoreApplication.setApplicationName("PyWCSp")
 
     # создаём модель
     #model = CplusDModel()
