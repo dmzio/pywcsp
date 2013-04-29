@@ -6,6 +6,7 @@ from models.framedata import DataQueue, DataQueueController
 from views.camimage import CamImageView
 from utils.pyside_dynamic import loadUi
 import numpy as np
+from PySide.QtCore import Slot
 
 import matplotlib
 
@@ -69,9 +70,9 @@ class MainWindow(QtGui.QMainWindow):
         file.addAction(openFile)
         file.addAction(exit)
 
-        mt = self.addToolBar('Try')
-        mt.addAction(exit)
-        mt.setFloatable(True)
+        #mt = self.addToolBar('Try')
+        #mt.addAction(exit)
+        #mt.setFloatable(True)
 
         self.show()
 
@@ -87,16 +88,41 @@ class MainWindow(QtGui.QMainWindow):
         self.wfqueue = DataQueueController(camimage.cam)
         timer.timeout.connect(self.wf_redraw)
 
+
+        #trying camera settings
+        tab_camset = QtGui.QWidget(self)
+        tabs.addTab(tab_camset, 'Camera Settings')
+        tab_cs_l = QtGui.QVBoxLayout(tab_camset)
+        self.l1 = QtGui.QLabel(tab_camset)
+        tab_cs_l.addWidget(self.l1)
+
+        self.bt1 = QtGui.QPushButton('&Try uvcdynctrl', tab_camset)
+        tab_cs_l.addWidget(self.bt1)
+        self.cam = camimage.cam
+        self.bt1.clicked.connect(self.check_params)
+
+
+
+    def check_params(self):
+        tt = self.cam.try_uvc_control()
+        if tt:
+            retval = self.cam.get_exposure_value()
+            self.l1.setText('{0}'.format(retval))
+
+
+
+
     def wf_redraw(self):
         self.wfqueue.add_frame_to_queue()
         fr = self.wfqueue.queue.get_waterfall_data()
 
         image = QtGui.QImage(fr.data, fr.shape[1], fr.shape[0], QtGui.QImage.Format_RGB888).rgbSwapped()
-        self.pixmap1 = QtGui.QPixmap.fromImage(image).scaledToWidth(self.size().width()-100)
+        self.pixmap1 = QtGui.QPixmap.fromImage(image).scaledToWidth(self.size().width())
 
         self.waterfall.setPixmap(self.pixmap1)
 
         self.canvas.data = self.wfqueue.queue.data[-1][:,1]  # gets the G component from the last line
+        self.canvas.data2 = self.wfqueue.queue.data[0][:,1]  # gets the G component from the first line
 
 
 
@@ -123,6 +149,7 @@ class MyDynamicMplCanvas(FigureCanvas):
         timer.start(10)
 
         self.data = []
+        self.data2 = []
 
     def compute_initial_figure(self):
          self.axes.plot([0, 1, 2, 3], 'r')
@@ -131,7 +158,7 @@ class MyDynamicMplCanvas(FigureCanvas):
         # Build a list of 4 random integers between 0 and 10 (both inclusive)
         l = self.data
 
-        self.axes.plot(l, 'r')
+        self.axes.plot(l, 'r', self.data2, 'b')
         self.draw()
 
 
