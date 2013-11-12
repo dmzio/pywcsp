@@ -76,8 +76,7 @@ class MainWindow(QtGui.QMainWindow):
         #mt.addAction(exit)
         #mt.setFloatable(True)
 
-        self.readSettings()
-        self.show()
+
 
 
             # generate the plot
@@ -109,6 +108,9 @@ class MainWindow(QtGui.QMainWindow):
         tab_cs_l.addWidget(self.bt1)
         self.cam = camimage.cam
         self.bt1.clicked.connect(self.check_params)
+
+        self.readSettings()
+        self.show()
 
 
     def catch_spectrum(self):
@@ -147,12 +149,19 @@ class MainWindow(QtGui.QMainWindow):
         self.settings.setValue("size", self.size())
         self.settings.setValue("pos", self.pos())
         self.settings.endGroup()
+        self.settings.beginGroup("Camera")
+        self.settings.setValue("active_part", self.cam.get_active_part_percent())
+        self.settings.endGroup()
+
 
     def readSettings(self):
         self.settings = QtCore.QSettings()
         self.settings.beginGroup("MainWindow")
         self.resize(self.settings.value("size", QtCore.QSize(400, 400)))
         self.move(self.settings.value("pos", QtCore.QPoint(200, 200)))
+        self.settings.endGroup()
+        self.settings.beginGroup("Camera")
+        self.cam.set_active_part(*self.settings.value("active_part"))
         self.settings.endGroup()
 
     # event : QCloseEvent

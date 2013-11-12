@@ -5,14 +5,15 @@ import subprocess
 
 class Camera(object):
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self.active_part = None
+
+        if 'active_part' in kwargs:
+            self.set_active_part(**kwargs['active_part'])
 
         self.capture = cv2.VideoCapture(0)
         self.capture.set(cv.CV_CAP_PROP_FRAME_WIDTH, 2280)
         self.capture.set(cv.CV_CAP_PROP_FRAME_HEIGHT, 720)
-
-
 
 
     def get_frame(self):
@@ -33,9 +34,9 @@ class Camera(object):
             self.active_part = {'x1': 1, 'x2': 99, 'y': 50}
 
         self.active_part.update({
-            'x1': x1 if x1 is not None else self.active_part['x1'],
-            'x2': x2 if x2 is not None else self.active_part['x2'],
-            'y': y if y is not None else self.active_part['y'],
+            'x1': int(x1) if x1 is not None else self.active_part['x1'],
+            'x2': int(x2) if x2 is not None else self.active_part['x2'],
+            'y': int(y) if y is not None else self.active_part['y'],
         })
 
     def get_active_part_percent(self):
