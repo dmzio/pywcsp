@@ -1,4 +1,7 @@
 import cv, cv2, time
+from subprocess import call, check_call, check_output
+import subprocess
+
 
 class Camera(object):
 
@@ -54,5 +57,34 @@ class Camera(object):
         x1_pc, x2_pc, y_pc = self.get_active_part_percent()
 
         return frame[h * y_pc // 100][w * x1_pc // 100:w * x2_pc // 100]
+
+    def try_uvc_control(self):
+        """
+        tries to find uvcdynctrl and control camera settings with it
+        """
+        retval = check_call(["uvcdynctrl", '-l'])
+        return not bool(retval)
+
+    def switch_autoexposure(self):
+        """
+
+        3 - AE enabled
+        1 - AE disabled (at least for some cams)
+        """
+        #TODO control of the devise name
+
+        cur_val = check_output('uvcdynctrl -d "video1"  -g "Exposure, Auto"', stderr=subprocess.STDOUT, shell=True)
+        if int(cur_val) == 3:
+            new_val = 1
+        else:
+            new_val = 3
+
+        check_call('uvcdynctrl -d "video0" -s "Exposure, Auto" {0}'.format(new_val), shell=True)
+
+        return check_output('uvcdynctrl -d "video0" -g "Exposure, Auto"', stderr=subprocess.STDOUT, shell=True)
+
+    def get_exposure_value(self):
+        return check_output('uvcdynctrl -d "video0" -g "Exposure (Absolute)"', stderr=subprocess.STDOUT, shell=True)
+
 
 

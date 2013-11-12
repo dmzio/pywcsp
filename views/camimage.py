@@ -26,10 +26,13 @@ class CamImageView(QtGui.QWidget):
         self.slider_y = QtGui.QSlider(self)
         self.slider_y.setInvertedAppearance(True)
         self.slider_y.setValue(50)
+        self.pos_y = QtGui.QLineEdit(self)
+        self.pos_y.setText(str(self.slider_y.value()))
 
         layout.addWidget(self.addinfo, 0, 0, columnSpan=2)
         layout.addWidget(self.video, 1, 0)
         layout.addWidget(self.slider_y, 1, 1)
+        layout.addWidget(self.pos_y, 2, 1)
         layout.addWidget(self.slider_x1, 2, 0)
         layout.addWidget(self.slider_x2, 3, 0)
 
@@ -37,6 +40,7 @@ class CamImageView(QtGui.QWidget):
         self.slider_x1.valueChanged.connect(self.update_x1)
         self.slider_x2.valueChanged.connect(self.update_x2)
         self.slider_y.valueChanged.connect(self.update_y)
+        self.pos_y.returnPressed.connect(self.update_y_t)
 
 
     def redraw(self):
@@ -78,6 +82,13 @@ class CamImageView(QtGui.QWidget):
     @Slot(int)
     def update_y(self, y):
         self.cam.set_active_part(y=y)
+        self.pos_y.setText(str(y))
+
+
+    def update_y_t(self):
+        y = self.pos_y.text()
+        self.cam.set_active_part(y=int(y))
+        self.slider_y.setValue(int(y))
 
 
     def draw_select_rect(self, pixmap):
