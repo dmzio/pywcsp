@@ -1,6 +1,6 @@
 # coding=utf-8
 from PySide import QtCore, QtGui
-import cv, cv2, time, ImageQt
+import cv, cv2, time
 from models.cam import Camera
 from models.framedata import DataQueue, DataQueueController
 from views.camimage import CamImageView

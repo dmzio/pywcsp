@@ -1,4 +1,4 @@
-import cv, cv2, time, ImageQt
+import cv, cv2, time
 
 class Camera(object):
 

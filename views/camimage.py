@@ -2,7 +2,7 @@
 from PySide.QtCore import Slot
 from PySide.QtUiTools import QUiLoader
 from PySide import QtCore, QtGui, QtUiTools
-import cv, cv2, time, ImageQt
+import cv, cv2, time
 from utils.pyside_dynamic import loadUi
 from models.cam import Camera
 
