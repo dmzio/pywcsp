@@ -109,6 +109,8 @@ class MainWindow(QtGui.QMainWindow):
         self.cam = camimage.cam
         self.bt1.clicked.connect(self.check_params)
 
+
+
         self.readSettings()
         self.show()
 
@@ -125,7 +127,11 @@ class MainWindow(QtGui.QMainWindow):
         tt = self.cam.try_uvc_control()
         if tt:
             retval = self.cam.switch_autoexposure()
-            self.l1.setText('{0}'.format(retval))
+            self.l1.setText("""
+        {0}
+        3 - AE enabled
+        1 - AE disabled (at least for some cams)
+        """.format(retval))
 
 
 

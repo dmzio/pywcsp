@@ -6,12 +6,15 @@ import subprocess
 class Camera(object):
 
     def __init__(self, **kwargs):
+
+        self.CAM_NUM = 0
+
         self.active_part = None
 
         if 'active_part' in kwargs:
             self.set_active_part(**kwargs['active_part'])
 
-        self.capture = cv2.VideoCapture(0)
+        self.capture = cv2.VideoCapture(self.CAM_NUM)
         self.capture.set(cv.CV_CAP_PROP_FRAME_WIDTH, 2280)
         self.capture.set(cv.CV_CAP_PROP_FRAME_HEIGHT, 720)
 
@@ -74,18 +77,18 @@ class Camera(object):
         """
         #TODO control of the devise name
 
-        cur_val = check_output('uvcdynctrl -d "video1"  -g "Exposure, Auto"', stderr=subprocess.STDOUT, shell=True)
+        cur_val = check_output('uvcdynctrl -d "video{0}"  -g "Exposure, Auto"'.format(self.CAM_NUM), stderr=subprocess.STDOUT, shell=True)
         if int(cur_val) == 3:
             new_val = 1
         else:
             new_val = 3
 
-        check_call('uvcdynctrl -d "video0" -s "Exposure, Auto" {0}'.format(new_val), shell=True)
+        check_call('uvcdynctrl -d "video{1}" -s "Exposure, Auto" {0}'.format(new_val, self.CAM_NUM), shell=True)
 
-        return check_output('uvcdynctrl -d "video0" -g "Exposure, Auto"', stderr=subprocess.STDOUT, shell=True)
+        return check_output('uvcdynctrl -d "video{0}" -g "Exposure, Auto"'.format(self.CAM_NUM), stderr=subprocess.STDOUT, shell=True)
 
     def get_exposure_value(self):
-        return check_output('uvcdynctrl -d "video0" -g "Exposure (Absolute)"', stderr=subprocess.STDOUT, shell=True)
+        return check_output('uvcdynctrl -d "video{0}" -g "Exposure (Absolute)"'.format(self.CAM_NUM), stderr=subprocess.STDOUT, shell=True)
 
 
 
