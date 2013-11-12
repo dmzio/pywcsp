@@ -19,4 +19,10 @@ class SpectralData(object):
         with open(filename, 'wb') as csvfile:
             sp_writer = csv.writer(csvfile)
             for i in range(len(X)):
-                sp_writer.writerow([i, X[i]])
+                try:
+                    x = (int(X[i]) + int(X[i-1]) + int(X[i-2]) + int(X[i+1]) + int(X[i+2]) + int(X[i+3]) + int(X[i-3]))/7.0
+                    sp_writer.writerow([i*(-0.533) + 842, X[i]])
+                except IndexError:
+                    continue
+
+
