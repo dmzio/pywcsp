@@ -116,7 +116,8 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def catch_spectrum(self):
-        self.spectral_data.add_data(self.wfqueue.queue.data[-1][:,1], None)  # TODO Y
+        d = (self.wfqueue.queue.data[-1][:,1] + self.wfqueue.queue.data[-1][:,0] + self.wfqueue.queue.data[-1][:,2])/3
+        self.spectral_data.add_data(d, None)  # TODO Y
 
 
 
@@ -146,7 +147,9 @@ class MainWindow(QtGui.QMainWindow):
         self.waterfall.setPixmap(self.pixmap1)
 
         self.canvas.data = self.wfqueue.queue.data[-1][:,1]  # gets the G component from the last line
-        self.canvas.data2 = self.wfqueue.queue.data[0][:,1]  # gets the G component from the first line
+        self.canvas.data2 = self.wfqueue.queue.data[-1][:,2]
+        self.canvas.data3 = self.wfqueue.queue.data[-1][:,0]
+        self.canvas.data4 = (self.canvas.data + self.canvas.data2 + self.canvas.data3)/3
 
 
     def writeSettings(self):
@@ -204,6 +207,8 @@ class MyDynamicMplCanvas(FigureCanvas):
 
         self.data = []
         self.data2 = []
+        self.data3 = []
+        self.data4 = []
 
     def compute_initial_figure(self):
          self.axes.plot([0, 1, 2, 3], 'r')
@@ -212,7 +217,7 @@ class MyDynamicMplCanvas(FigureCanvas):
         # Build a list of 4 random integers between 0 and 10 (both inclusive)
         l = self.data
 
-        self.axes.plot(l, 'r', self.data2, 'b')
+        self.axes.plot(l, 'r', self.data2, 'b', self.data3, 'g', self.data4, 'y')
         self.draw()
 
 
