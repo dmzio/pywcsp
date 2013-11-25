@@ -8,7 +8,7 @@ from utils.pyside_dynamic import loadUi
 import numpy as np
 from PySide.QtCore import Slot
 from models.spectra import SpectralData
-
+import sys
 import matplotlib
 
 ## Added for PySide
@@ -116,11 +116,10 @@ class MainWindow(QtGui.QMainWindow):
 
 
     def catch_spectrum(self):
-        d = (self.wfqueue.queue.data[-1][:,1] + self.wfqueue.queue.data[-1][:,0] + self.wfqueue.queue.data[-1][:,2])/3
+        ll = 10
+        lf = 0
+        d = (self.wfqueue.queue.get_data_line(range(lf-ll, lf), 'G') + self.wfqueue.queue.get_data_line(range(lf-ll, lf), 'B') + self.wfqueue.queue.get_data_line(range(lf-ll, lf), 'R'))/3.0
         self.spectral_data.add_data(d, None)  # TODO Y
-
-
-
 
 
 
@@ -146,10 +145,13 @@ class MainWindow(QtGui.QMainWindow):
 
         self.waterfall.setPixmap(self.pixmap1)
 
-        self.canvas.data = self.wfqueue.queue.data[-1][:,1]  # gets the G component from the last line
-        self.canvas.data2 = self.wfqueue.queue.data[-1][:,2]
-        self.canvas.data3 = self.wfqueue.queue.data[-1][:,0]
-        self.canvas.data4 = (self.canvas.data + self.canvas.data2 + self.canvas.data3)/3
+        ll = 10
+        lf = 0
+        self.canvas.data = self.wfqueue.queue.get_data_line(range(lf-ll, lf), 'G')  # gets the G component from the last line
+        self.canvas.data2 = self.wfqueue.queue.get_data_line(range(lf-ll, lf), 'R')  # Red component
+        self.canvas.data3 = self.wfqueue.queue.get_data_line(range(lf-ll, lf), 'B')  # Blue component from the last line
+        self.canvas.data4 = (self.canvas.data3 + self.canvas.data2 + self.canvas.data) / 3
+
 
 
     def writeSettings(self):
@@ -214,10 +216,9 @@ class MyDynamicMplCanvas(FigureCanvas):
          self.axes.plot([0, 1, 2, 3], 'r')
 
     def update_figure(self):
-        # Build a list of 4 random integers between 0 and 10 (both inclusive)
         l = self.data
 
-        self.axes.plot(l, 'r', self.data2, 'b', self.data3, 'g', self.data4, 'y')
+        self.axes.plot(l, 'g', self.data2, 'r', self.data3, 'b', self.data4, 'y')
         self.draw()
 
 

@@ -42,7 +42,6 @@ class CamImageView(QtGui.QWidget):
         self.slider_y.valueChanged.connect(self.update_y)
         self.pos_y.returnPressed.connect(self.update_y_t)
 
-
     def redraw(self):
         frame = self.cam.get_frame()
 
@@ -52,26 +51,16 @@ class CamImageView(QtGui.QWidget):
         self.draw_select_rect(self.pixmap)
 
         self.video.setPixmap(self.pixmap)
-        txt = 'Gain is {0} \n ' \
-              'EXPOSURE: {1} \n' \
-              'MODE: {2}\n' \
-              'HUE: {3} \n' \
-              'BRIGHTNESS: {4} \n' \
-              'CONTRAST: {5}'.format(self.cam.capture.get(cv.CV_CAP_PROP_GAIN),
-                                     self.cam.capture.get(cv.CV_CAP_PROP_EXPOSURE),
-                                     self.cam.capture.get(cv.CV_CAP_PROP_MODE),
-                                     self.cam.capture.get(cv.CV_CAP_PROP_HUE),
-                                     self.cam.capture.get(cv.CV_CAP_PROP_BRIGHTNESS),
+        txt = 'BRIGHTNESS: {0} \n' \
+              'CONTRAST: {1}'.format(self.cam.capture.get(cv.CV_CAP_PROP_BRIGHTNESS),
                                      self.cam.capture.get(cv.CV_CAP_PROP_CONTRAST))
         self.addinfo.setText(txt)
-
 
     @Slot(int)
     def update_x1(self, x1):
         if x1 >= self.slider_x2.value() - self.MIN_WIDTH:
             self.slider_x2.setSliderPosition(x1 + self.MIN_WIDTH)
         self.cam.set_active_part(x1=x1)
-
 
     @Slot(int)
     def update_x2(self, x2):
@@ -84,12 +73,10 @@ class CamImageView(QtGui.QWidget):
         self.cam.set_active_part(y=y)
         self.pos_y.setText(str(y))
 
-
     def update_y_t(self):
         y = self.pos_y.text()
         self.cam.set_active_part(y=int(y))
         self.slider_y.setValue(int(y))
-
 
     def draw_select_rect(self, pixmap):
         painter = QtGui.QPainter(pixmap)
